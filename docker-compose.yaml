@@ -23,7 +23,6 @@ services:
     environment:
       - GOOGLE_CLOUD_PROJECT=ca-willsbooster-test
       - HOST=postgres
-      - GOOGLE_APPLICATION_CREDENTIALS=ca-willsbooster-test-db2897beab98.json
     restart: always
     depends_on:
       - postgres
