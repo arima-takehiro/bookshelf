@@ -4,7 +4,7 @@ services:
     image: postgres
     container_name: postgres
     ports:
-      - 5432:5432
+      - 5434:5432
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=password
@@ -23,6 +23,7 @@ services:
     environment:
       - GOOGLE_CLOUD_PROJECT=ca-willsbooster-test
       - HOST=postgres
+      - GOOGLE_APPLICATION_CREDENTIALS=ca-willsbooster-test-db2897beab98.json
     restart: always
     depends_on:
       - postgres
