@@ -88,7 +88,7 @@ func (b *Bookshelf) registerHandlers() {
 	// See https://www.gorillatoolkit.org/pkg/mux.
 	r := mux.NewRouter()
 
-
+	r.Handle("/", http.RedirectHandler("/books", http.StatusFound))
 
 	r.Methods("GET").Path("/books").
 		Handler(appHandler(b.listHandler))
