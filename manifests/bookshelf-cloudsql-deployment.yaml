@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: bookshelf
+  name: bookshelf
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bookshelf
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: bookshelf
+      name: bookshelf
+    spec:
+      containers:
+        - image: gcr.io/ca-willsbooster-test/bookshelf:v1.0.6
+          name: bookshelf
+          resources:
+            requests:
+              cpu: 100m
+              memory: 2Gi
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: bookshelf-app
+            - configMapRef:
+                name: bookshelf-env
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /healthz
+        - image: gcr.io/cloudsql-docker/gce-proxy:1.17
+          name: gce-proxy
+          command:
+            - "/cloud_sql_proxy"
+            - "-instances=ca-willsbooster-test:asia-northeast1:bookshelf-db=tcp:5432"
+            - "-credential_file=/secrets/cloudsql-proxy-cred.json"
+          volumeMounts:
+          - mountPath: /secrets/
+            readOnly: true
+            name: credentials
+      volumes:
+      - name: credentials
+        secret:
+           secretName: credentials

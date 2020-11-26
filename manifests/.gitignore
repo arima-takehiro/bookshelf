@@ -1,0 +1,4 @@
+cloudsql-proxy-cred.json
+cloudsql-proxy-cred.yaml
+db-env-secret.yaml
+app-env-configmap.yaml
