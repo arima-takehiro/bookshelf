@@ -88,7 +88,7 @@ func (b *Bookshelf) registerHandlers() {
 	// See https://www.gorillatoolkit.org/pkg/mux.
 	r := mux.NewRouter()
 
-	r.Handle("/", http.RedirectHandler("/books", http.StatusFound))
+
 
 	r.Methods("GET").Path("/books").
 		Handler(appHandler(b.listHandler))
@@ -108,6 +108,7 @@ func (b *Bookshelf) registerHandlers() {
 
 	r.Methods("GET").Path("/logs").Handler(appHandler(b.sendLog))
 	r.Methods("GET").Path("/errors").Handler(appHandler(b.sendError))
+	r.Methods("GET").Path("/healthz").Handler(appHandler(b.checkHealth))
 
 	// Delegate all of the HTTP routing and serving to the gorilla/mux router.
 	// Log all requests using the standard Apache format.
@@ -118,6 +119,8 @@ func (b *Bookshelf) registerHandlers() {
 func (b *Bookshelf) listHandler(w http.ResponseWriter, r *http.Request) *appError {
 	ctx := r.Context()
 	books, err := b.DB.ListBooks(ctx)
+
+	w.Header().Set("Cache-Control", "max-age=864000, public")
 	if err != nil {
 		return b.appErrorf(r, err, "could not list books: %v", err)
 	}
@@ -303,6 +306,11 @@ func (b *Bookshelf) sendError(w http.ResponseWriter, r *http.Request) *appError 
 	return b.appErrorf(r, err, msg)
 }
 
+func (b *Bookshelf) checkHealth(w http.ResponseWriter, r *http.Request) *appError {
+	fmt.Fprintf(w, "OK")
+	return nil
+}
+
 // https://blog.golang.org/error-handling-and-go
 type appHandler func(http.ResponseWriter, *http.Request) *appError
 
@@ -321,6 +329,7 @@ func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(e.code)
 		fmt.Fprint(w, e.message)
 
+
 		e.b.errorClient.Report(errorreporting.Entry{
 			Error: e.err,
 			Req:   r,
@@ -328,6 +337,7 @@ func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		e.b.errorClient.Flush()
 	}
+
 }
 
 func (b *Bookshelf) appErrorf(r *http.Request, err error, format string, v ...interface{}) *appError {
