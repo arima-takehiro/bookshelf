@@ -39,7 +39,7 @@ spec:
           name: gce-proxy
           command:
             - "/cloud_sql_proxy"
-            - "-instances=ca-willsbooster-test:asia-northeast1:bookshelf-db=tcp:5432"
+            - "-instances=[instance_name]=tcp:5432"
             - "-credential_file=/secrets/cloudsql-proxy-cred.json"
           volumeMounts:
           - mountPath: /secrets/
