@@ -27,14 +27,18 @@ spec:
           ports:
             - containerPort: 8080
           envFrom:
-            - secretRef:
-                name: bookshelf-app
             - configMapRef:
-                name: bookshelf-env
+                name: app-env
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /secret/app-cred.json
           readinessProbe:
             httpGet:
               port: 8080
               path: /healthz
+          volumeMounts:
+            - mountPath: /secret/
+              name: app-cred
         - image: gcr.io/cloudsql-docker/gce-proxy:1.17
           name: gce-proxy
           command:
@@ -48,4 +52,7 @@ spec:
       volumes:
       - name: credentials
         secret:
-           secretName: credentials
+           secretName: cloudsql-proxy
+      - name: app-cred
+        secret:
+            secretName: app-cred
