@@ -52,7 +52,7 @@ spec:
       volumes:
       - name: credentials
         secret:
-           secretName: cloudsql-proxy
+           secretName: cloudsql-proxy-cred
       - name: app-cred
         secret:
             secretName: app-cred
