@@ -4,8 +4,8 @@ metadata:
   labels:
     app: bookshelf
   name: bookshelf
-  annotations:
-    cloud.google.com/backend-config: '{"ports": {"8080":"my-backendconfig"}}'
+#  annotations:
+#    cloud.google.com/backend-config: '{"ports": {"8080":"my-backendconfig"}}'
 spec:
   ports:
   - port: 8080
