@@ -39,20 +39,7 @@ spec:
           volumeMounts:
             - mountPath: /secret/
               name: app-cred
-        - image: gcr.io/cloudsql-docker/gce-proxy:1.17
-          name: gce-proxy
-          command:
-            - "/cloud_sql_proxy"
-            - "-instances=[instance_name]=tcp:5432"
-            - "-credential_file=/secrets/cloudsql-proxy-cred.json"
-          volumeMounts:
-          - mountPath: /secrets/
-            readOnly: true
-            name: credentials
       volumes:
-      - name: credentials
-        secret:
-           secretName: cloudsql-proxy-cred
       - name: app-cred
         secret:
             secretName: app-cred
